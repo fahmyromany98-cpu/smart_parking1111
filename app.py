@@ -1,6 +1,9 @@
 from flask import Flask, jsonify, render_template, request
+from flask_cors import CORS
+import os
 
 app = Flask(__name__)
+CORS(app)  # مهم عشان الربط مع الفرونت
 
 slots = {
     1: "free", 2: "free", 3: "free",
@@ -26,13 +29,15 @@ def update():
     data = request.json or {}
     slot = data.get('slot')
     status = data.get('status')
+
     if slot in slots and status in ['free', 'occupied']:
         slots[slot] = status
         return jsonify({"success": True})
+
     return jsonify({"success": False})
 
-import os
+# مهم ل Railway
+port = int(os.environ.get("PORT", 5000))
 
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 5000))
     app.run(host='0.0.0.0', port=port)
